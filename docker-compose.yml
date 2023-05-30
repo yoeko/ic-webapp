@@ -1,0 +1,72 @@
+version: "1.0"
+services:
+  postgres_db:
+    container_name: postgres_db
+    image: "postgres:15"
+    networks:
+      - odoo-network
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - "db:/var/lib/postgresql/data/pgdata"
+
+  odoo:
+    container_name: odoo-web
+    image: "odoo:15.0"
+    depends_on:
+      - postgres_db
+    networks:
+      - odoo-network
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=postgres_db
+      - USER=admin
+      - PASSWORD=admin
+    volumes:
+      - odoo-data:/var/lib/odoo
+
+  pgadmin:
+    container_name: pgadmin
+    image: "dpage/pgadmin4"
+    networks:
+    - odoo-network
+    ports:
+      - "9094:80"
+    depends_on: 
+      - postgres_db
+    environment:
+      - HOST=postgres_db
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+  
+  webapp:
+    container_name: webapp
+    networks:
+    - odoo-network
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      #- ODOO_URL=odoo-web
+      #- PGADMIN_URL=pgadmin
+      - ODOO_URL=http://${DOCKER_GATEWAY_HOST:-host.docker.internal}:8069
+      - PGADMIN_URL=http://${DOCKER_GATEWAY_HOST:-host.docker.internal}:9094
+
+volumes:
+  db:
+  odoo-data:
+  pgadmin-data:
+
+networks:
+  odoo-network: 
+    driver: bridge
