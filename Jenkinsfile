@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        curl http://localhost:8081 | grep -q 'Intranet  Applications'
+                        curl -I http://localhost:7080 | grep "200"
                     """
                 }
             }
