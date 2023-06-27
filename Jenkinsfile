@@ -1,6 +1,6 @@
 pipeline {
     environment {
-    IMAGE_NAME = "ic-webapp-webapp"
+    IMAGE_NAME = "build_webapp"
 		IMAGE_TAG = "latest"
     DOCKER_USER = "lyk1719"
 		STAGING = "lyk1719-staging"
@@ -57,6 +57,7 @@ pipeline {
             agent any
             steps {
                 script {
+                    //sh """docker push ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"""
                     sh """docker push ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"""
                 }
             }
