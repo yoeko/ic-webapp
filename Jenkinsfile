@@ -53,6 +53,14 @@ pipeline {
                 sh """echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"""
             }
         }
+	stage('Retag the image') {
+            agent any
+            steps {
+                script {
+                    sh """docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"""
+                }
+            }
+        }
         stage('Push') {
             agent any
             steps {
