@@ -55,7 +55,7 @@ services:
       context: ./
       dockerfile: ./Dockerfile
     ports:
-      - "8081:8081"
+      - "8090:8090"
     environment:
       - ODOO_URL=http://$${DOCKER_GATEWAY_HOST:-host.docker.internal}:8069
       - PGADMIN_URL=http://$${DOCKER_GATEWAY_HOST:-host.docker.internal}:9094
